@@ -10,5 +10,5 @@ class CaseFile(BaseModel):
     description: Optional[str] = None
     people_affected: Optional[int] = None
     immediate_danger: Optional[bool] = None
-    urgency_level: Optional[Literal["low", "medium", "high", "critical"]] = None
+    urgency: Optional[Literal["low", "medium", "high", "critical"]] = None
     notes: list[str] = []
