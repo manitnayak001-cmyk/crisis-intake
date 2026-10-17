@@ -42,7 +42,8 @@ REQUIRED_FIELDS = [
     "incident_type",
     "description",
     "immediate_danger",
-    "urgency"
+    "urgency",
+    "people_affected",
 ]
 
 def check_completeness(case: CaseFile):
@@ -58,12 +59,15 @@ def check_completeness(case: CaseFile):
         "missing_fields": missing_fields,
     }
 
+def is_case_complete(case: CaseFile) -> bool:
+    return check_completeness(case)["complete"]
+
 
 def flag_urgency(case: CaseFile, level: str, reason: str):
     allowed_levels = ["low", "medium", "high", "critical"]
     if level not in allowed_levels:
         raise ValueError(f"Invalid urgency level: {level}")
-
+    
     case.urgency = level
     case.notes.append(f"Urgency flagged as {level}: {reason}")
     return {
@@ -73,6 +77,12 @@ def flag_urgency(case: CaseFile, level: str, reason: str):
     }
 
 def finalize_case(case: CaseFile, summary: str):
+    # Guard against repeated finalization.
+    if case.status == "finalized":
+        return {
+            "success": False,
+            "error": "Case is already finalized",
+        }
     completeness = check_completeness(case)
 
     if not completeness["complete"]:
@@ -82,13 +92,21 @@ def finalize_case(case: CaseFile, summary: str):
             "missing_fields": completeness["missing_fields"],
         }
 
+    case.status = "finalized"
+
     return {
         "success": True,
-        "status": "complete",
+        "status": case.status,
         "summary": summary,
     }
 
 def execute_tool(case: CaseFile, tool_name: str, arguments: str):
+    if case.status == "finalized":
+        return {
+            "success": False,
+            "error": "Cannot execute tools on a finalized case",
+        }
+
     args = json.loads(arguments)
     if tool_name == "update_case_field":
         return update_case_field(case, **args)

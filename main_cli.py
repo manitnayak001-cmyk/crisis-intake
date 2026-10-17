@@ -1,6 +1,7 @@
 from llm import chat
 from models import CaseFile
-from agents.tools import TOOLS, execute_tool, check_completeness
+from agents.tools import TOOLS, execute_tool, check_completeness, is_case_complete
+import json
 
 
 case = CaseFile()
@@ -71,14 +72,41 @@ for step in range(MAX_STEPS):
                 }
             )
 
+        # Check completeness after all tool calls have executed.
+        if is_case_complete(case):
+            summary = (
+                f"Incident: {case.incident_type}. "
+                f"Location: {case.location}. "
+                f"Description: {case.description}. "
+                f"Immediate danger: "
+                f"{'Yes' if case.immediate_danger else 'No'}. "
+                f"Urgency: {case.urgency}."
+            )
+
+            result = execute_tool(
+                case=case,
+                tool_name="finalize_case",
+                arguments=json.dumps({"summary": summary}),
+            )
+
+            print("\nFinalization result:", result)
+
+            if result["success"]:
+                print("Case successfully finalized.")
+                break
+
         continue
 
     # ------------------------------------------------
     # CASE 2: LLM produced normal text
     # ------------------------------------------------
 
-    messages.append(message)
+    # The LLM has returned normal text instead of calling a tool.
+    if is_case_complete(case):
+        print("\nRequired case information has been collected.")
+        break
 
+    messages.append(message)
     break
 
 message = response.choices[0].message

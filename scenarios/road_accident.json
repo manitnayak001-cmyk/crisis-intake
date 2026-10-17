@@ -1,0 +1,14 @@
+
+{
+  "scenario_id": "road_accident_001",
+  "caller_name": "Alex",
+  "incident_type": "road_accident",
+  "location": "45 Park Road",
+  "description": "Two cars collided at an intersection. One person is injured.",
+  "people_affected": 1,
+  "immediate_danger": true,
+  "urgency": "high",
+  "callback_number": "5550105678",
+  "personality": "Shaken and worried, but able to answer questions",
+  "initial_message": "There has been a car crash! Please help!"
+}

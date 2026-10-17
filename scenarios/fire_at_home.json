@@ -1,0 +1,13 @@
+{
+  "scenario_id": "fire_at_home_001",
+  "caller_name": "Manit",
+  "incident_type": "fire",
+  "location": "123 Main Street",
+  "description": "The kitchen is on fire and two people are inside.",
+  "people_affected": 2,
+  "immediate_danger": true,
+  "urgency": "critical",
+  "callback_number": "5550101234",
+  "personality": "Frightened and speaking in short sentences",
+  "initial_message": "Please help me! There's a fire in my house!"
+}

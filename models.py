@@ -12,3 +12,4 @@ class CaseFile(BaseModel):
     immediate_danger: Optional[bool] = None
     urgency: Optional[Literal["low", "medium", "high", "critical"]] = None
     notes: list[str] = []
+    status: Literal["collecting", "finalized"] = "collecting"
